@@ -1,84 +1,126 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web3 Agency Dashboard</title>
+  <meta name="theme-color" content="#121212">
+  <title>Web3 Mail — Agency Console</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-    h2, h3 { color: #4CAF50; border-bottom: 2px solid #333; padding-bottom: 10px; }
-    .wallet-row { display: flex; align-items: center; margin-bottom: 10px; }
-    .wallet-row label { width: 90px; font-weight: bold; color: #b0bec5; }
-    .wallet-row input { flex: 1; padding: 8px 12px; background: #2c2c2c; color: #fff; border: 1px solid #444; border-radius: 6px; }
-    textarea { width: 100%; height: 100px; background: #2c2c2c; color: #fff; border: 1px solid #444; border-radius: 6px; padding: 10px; box-sizing: border-box; }
-    button { background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 15px; }
+    :root { color-scheme: dark; --bg: #121212; --panel: #1e1e1e; --field: #2c2c2c; --border: #444; --text: #e0e0e0; --muted: #b0bec5; --green: #4caf50; --red: #ef5350; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; background: var(--panel); padding: 28px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,.5); }
+    h1, h2 { color: var(--green); }
+    h1 { font-size: 1.65rem; margin-top: 0; }
+    h2 { font-size: 1.15rem; border-bottom: 1px solid #393939; padding-bottom: 10px; margin-top: 28px; }
+    p, .hint { line-height: 1.5; }
+    .hint, .muted { color: var(--muted); font-size: .92rem; }
+    .notice { padding: 12px 14px; border-left: 4px solid #42a5f5; background: #19242b; border-radius: 5px; }
+    .row { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+    input[type="text"], textarea { min-width: 0; width: 100%; padding: 10px 12px; background: var(--field); color: white; border: 1px solid var(--border); border-radius: 6px; }
+    textarea { min-height: 130px; resize: vertical; }
+    label { color: var(--muted); }
+    .row input[type="text"] { flex: 1; }
+    button { background: var(--green); color: white; border: 0; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     button:hover { background: #45a049; }
-    .status-box { margin-top: 25px; background: #252525; padding: 15px; border-radius: 6px; border-left: 4px solid #4CAF50; }
+    button.secondary { background: #39434a; }
+    button.danger { background: #8e3434; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #81c784; outline-offset: 2px; }
+    .item { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #333; padding: 10px 0; overflow-wrap: anywhere; }
+    .item .address { flex: 1; }
+    .item label { display: flex; gap: 8px; align-items: center; }
+    .empty { color: #999; padding: 8px 0; }
+    .status { min-height: 1.4em; color: #81c784; }
+    .preview { white-space: pre-wrap; overflow-wrap: anywhere; background: #252525; padding: 14px; border-radius: 6px; min-height: 60px; }
+    @media (max-width: 600px) { body { padding: 10px; } .container { padding: 18px; } .row { align-items: stretch; } .row button { white-space: nowrap; } .item { align-items: flex-start; flex-wrap: wrap; } }
   </style>
 </head>
 <body>
+<main class="container">
+  <h1>✉️ Web3 Mail — Agency Console</h1>
+  <p class="notice"><strong>Prototype:</strong> This page only stores your contact list and campaign draft in this browser. It does not connect to a wallet or send messages yet. Add only recipients who have agreed to receive your messages. Never enter a seed phrase or private key here.</p>
 
-<div class="container">
-  <h2>🚀 Web3 Agency Control Panel</h2>
-  
-  <h3>Daraja la Pili: Wallet 10 na Ujumbe wa USDT</h3>
-  <div id="wallet-inputs-container"></div>
+  <section aria-labelledby="senders-heading">
+    <h2 id="senders-heading">Authorized sender addresses</h2>
+    <p class="hint">Add as many public wallet addresses as you need. This prototype does not hold keys or sign transactions.</p>
+    <div class="row"><label for="sender-address" class="sr-only">Sender wallet address</label><input id="sender-address" type="text" autocomplete="off" placeholder="Public sender wallet address"><button id="add-sender">Add address</button></div>
+    <div id="senders" aria-live="polite"></div>
+  </section>
 
-  <div style="margin-top: 20px;">
-    <label style="font-weight: bold; color: #b0bec5; display: block; margin-bottom: 8px;">Ujumbe wa Kutuma kwa Wateja:</label>
-    <textarea id="outbound-message" placeholder="Weka ujumbe wako wa Wallpapers na Stickers hapa..."></textarea>
-  </div>
+  <section aria-labelledby="contacts-heading">
+    <h2 id="contacts-heading">Consented recipients</h2>
+    <p class="hint">Record contacts who explicitly opted in. This tool does not discover, scrape, or verify addresses.</p>
+    <div class="row"><label for="recipient-address" class="sr-only">Recipient wallet address</label><input id="recipient-address" type="text" autocomplete="off" placeholder="Public recipient wallet address"><button id="add-recipient">Add opted-in contact</button></div>
+    <div id="recipients" aria-live="polite"></div>
+  </section>
 
-  <button id="save-config-btn">Hifadhi Mipangilio</button>
-
-  <div class="status-box">
-    <h3>📊 Hali ya Mfumo</h3>
-    <p><strong>Daraja la Kwanza:</strong> Kichujio cha Miamala 50k & Master Vault Dedup</p>
-    <p><strong>Daraja la Pili:</strong> Load Balancing ya Wallet 10</p>
-    <p id="save-status" style="color: #4CAF50; font-weight: bold;"></p>
-  </div>
-</div>
-
+  <section aria-labelledby="campaign-heading">
+    <h2 id="campaign-heading">Campaign draft</h2>
+    <label for="message">Message</label>
+    <textarea id="message" maxlength="5000" placeholder="Write your message for opted-in recipients"></textarea>
+    <p class="hint"><span id="recipient-count">0</span> opted-in recipient(s) in this browser. Sending is not implemented in this prototype.</p>
+    <button id="preview-campaign">Preview campaign</button>
+    <h2>Preview</h2>
+    <div id="preview" class="preview" aria-live="polite">Your campaign preview will appear here.</div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+</main>
 <script>
-  const container = document.getElementById('wallet-inputs-container');
-  for (let i = 1; i <= 10; i++) {
-    const div = document.createElement('div');
-    div.className = 'wallet-row';
-    div.innerHTML = `
-      <label>Wallet #${i}:</label>
-      <input type="text" id="wallet-${i}" placeholder="Weka Wallet Address #${i}" />
-    `;
-    container.appendChild(div);
+  const STORAGE_KEY = 'web3_mail_prototype_v1';
+  const state = loadState();
+  const senderInput = document.getElementById('sender-address');
+  const recipientInput = document.getElementById('recipient-address');
+  const messageInput = document.getElementById('message');
+
+  function loadState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      return { senders: Array.isArray(saved.senders) ? saved.senders : [], recipients: Array.isArray(saved.recipients) ? saved.recipients : [], message: typeof saved.message === 'string' ? saved.message : '' };
+    } catch { return { senders: [], recipients: [], message: '' }; }
+  }
+  function persist() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    document.getElementById('status').textContent = 'Saved in this browser only.';
+  }
+  function addAddress(input, list, label) {
+    const value = input.value.trim();
+    if (!value) { document.getElementById('status').textContent = `Enter a ${label} address first.`; return; }
+    if (list.includes(value)) { document.getElementById('status').textContent = 'That address is already listed.'; return; }
+    list.push(value);
+    input.value = '';
+    persist();
+    render();
+  }
+  function renderList(elementId, values, label) {
+    const root = document.getElementById(elementId);
+    root.replaceChildren();
+    if (!values.length) {
+      const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'No addresses added yet.'; root.append(empty); return;
+    }
+    values.forEach((value, index) => {
+      const row = document.createElement('div'); row.className = 'item';
+      const address = document.createElement('span'); address.className = 'address'; address.textContent = value;
+      const remove = document.createElement('button'); remove.className = 'danger'; remove.type = 'button'; remove.textContent = 'Remove'; remove.setAttribute('aria-label', `Remove ${label} ${value}`);
+      remove.addEventListener('click', () => { values.splice(index, 1); persist(); render(); });
+      row.append(address, remove); root.append(row);
+    });
+  }
+  function render() {
+    renderList('senders', state.senders, 'sender');
+    renderList('recipients', state.recipients, 'recipient');
+    document.getElementById('recipient-count').textContent = state.recipients.length;
+    messageInput.value = state.message;
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedWallets = JSON.parse(localStorage.getItem('agency_ten_wallets') || '[]');
-    savedWallets.forEach((addr, index) => {
-      const input = document.getElementById(`wallet-${index + 1}`);
-      if (input) input.value = addr;
-    });
-
-    const savedMessage = localStorage.getItem('agency_outbound_message');
-    if (savedMessage) {
-      document.getElementById('outbound-message').value = savedMessage;
-    }
+  document.getElementById('add-sender').addEventListener('click', () => addAddress(senderInput, state.senders, 'sender'));
+  document.getElementById('add-recipient').addEventListener('click', () => addAddress(recipientInput, state.recipients, 'recipient'));
+  messageInput.addEventListener('input', () => { state.message = messageInput.value; persist(); });
+  document.getElementById('preview-campaign').addEventListener('click', () => {
+    const preview = document.getElementById('preview');
+    preview.textContent = state.message.trim() ? state.message.trim() : 'Add a message to preview your campaign.';
+    document.getElementById('status').textContent = state.recipients.length ? `Preview only — would address ${state.recipients.length} opted-in contact(s). Nothing was sent.` : 'Add opted-in contacts before preparing a campaign. Nothing was sent.';
   });
-
-  document.getElementById('save-config-btn').addEventListener('click', () => {
-    const wallets = [];
-    for (let i = 1; i <= 10; i++) {
-      const val = document.getElementById(`wallet-${i}`).value.trim();
-      if (val) wallets.push(val);
-    }
-    const message = document.getElementById('outbound-message').value.trim();
-
-    localStorage.setItem('agency_ten_wallets', JSON.stringify(wallets));
-    localStorage.setItem('agency_outbound_message', message);
-    
-    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} zimehifadhiwa kikamilifu.`;
-  });
+  render();
 </script>
-
 </body>
 </html>
