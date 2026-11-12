@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web3 Agency Unified Control Panel</title>
+  <title>Web3 Agency Unified Pipeline</title>
   <style>
     body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .container { max-width: 900px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     h2, h3 { color: #4CAF50; border-bottom: 2px solid #333; padding-bottom: 10px; }
     .wallet-row { display: flex; align-items: center; margin-bottom: 10px; }
     .wallet-row label { width: 90px; font-weight: bold; color: #b0bec5; }
     .wallet-row input { flex: 1; padding: 8px 12px; background: #2c2c2c; color: #fff; border: 1px solid #444; border-radius: 6px; }
+    textarea { width: 100%; height: 100px; background: #2c2c2c; color: #fff; border: 1px solid #444; border-radius: 6px; padding: 10px; box-sizing: border-box; }
     button { background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 15px; }
     button:hover { background: #45a049; }
     .status-box { margin-top: 25px; background: #252525; padding: 15px; border-radius: 6px; border-left: 4px solid #4CAF50; }
@@ -19,49 +20,70 @@
 <body>
 
 <div class="container">
-  <h2>🚀 Web3 Agency Control Panel</h2>
-  <p>Dhibiti Wallet 10 za kutuma ujumbe wa Duka lako la Wallpapers na Stickers za USDT.</p>
+  <h2>🚀 Web3 Agency Unified Control Panel</h2>
+  
+  <h3>Daraja la Pili: Mipangilio ya Wallet 10 na Ujumbe</h3>
+  <p>Weka hapa anwani za zile wallet zako 10 za XMTP na ujumbe unaotaka kuwatumia wateja:</p>
+  
+  <div id="wallet-inputs-container">
+    <!-- Sehemu 10 za kuweka wallet address -->
+  </div>
 
-  <h3>⚙️ Kikosi Kazi cha Wallet 10</h3>
-  <div id="wallet-inputs-container"></div>
+  <div style="margin-top: 20px;">
+    <label style="font-weight: bold; color: #b0bec5; display: block; margin-bottom: 8px;">Ujumbe wa Kutuma kwa Wateja:</label>
+    <textarea id="outbound-message" placeholder="Weka ujumbe wako hapa..."></textarea>
+  </div>
 
-  <button id="save-config-btn">Hifadhi Mipangilio</button>
+  <button id="save-config-btn">Hifadhi Mipangilio Yote</button>
 
   <div class="status-box">
     <h3>📊 Hali ya Mfumo</h3>
-    <p><strong>Lengo:</strong> Wallets 50,000 kwa siku</p>
+    <p><strong>Daraja la Kwanza:</strong> Kichujio cha Miamala 50k & Master Vault Dedup</p>
+    <p><strong>Daraja la Pili:</strong> Load Balancing ya Wallet 10 & Fungu la Watu 100</p>
     <p id="save-status" style="color: #4CAF50; font-weight: bold;"></p>
   </div>
 </div>
 
 <script>
+  // Kutengeneza input 10 za wallet address kwenye dashboard
   const container = document.getElementById('wallet-inputs-container');
   for (let i = 1; i <= 10; i++) {
     const div = document.createElement('div');
     div.className = 'wallet-row';
     div.innerHTML = `
       <label>Wallet #${i}:</label>
-      <input type="text" id="wallet-${i}" placeholder="Weka Polygon Wallet Address #${i}" />
+      <input type="text" id="wallet-${i}" placeholder="Weka Wallet Address #${i}" />
     `;
     container.appendChild(div);
   }
 
+  // Kupakia data zilizohifadhiwa awali
   window.addEventListener('DOMContentLoaded', () => {
     const savedWallets = JSON.parse(localStorage.getItem('agency_ten_wallets') || '[]');
     savedWallets.forEach((addr, index) => {
       const input = document.getElementById(`wallet-${index + 1}`);
       if (input) input.value = addr;
     });
+
+    const savedMessage = localStorage.getItem('agency_outbound_message');
+    if (savedMessage) {
+      document.getElementById('outbound-message').value = savedMessage;
+    }
   });
 
+  // Kuhifadhi mabadiliko
   document.getElementById('save-config-btn').addEventListener('click', () => {
     const wallets = [];
     for (let i = 1; i <= 10; i++) {
       const val = document.getElementById(`wallet-${i}`).value.trim();
       if (val) wallets.push(val);
     }
+    const message = document.getElementById('outbound-message').value.trim();
+
     localStorage.setItem('agency_ten_wallets', JSON.stringify(wallets));
-    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} zimehifadhiwa.`;
+    localStorage.setItem('agency_outbound_message', message);
+    
+    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} na ujumbe vimehifadhiwa kikamilifu.`;
   });
 </script>
 
