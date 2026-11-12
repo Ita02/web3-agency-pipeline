@@ -1,10 +1,3 @@
-<!-- 
-================================================================================
-UNIFIED WEB3 AGENCY PIPELINE (Project 2 & Project 3)
-Fixed, Optimized, and Fully Automated Dashboard & Backend Worker
-================================================================================
--->
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -13,142 +6,35 @@ Fixed, Optimized, and Fully Automated Dashboard & Backend Worker
   <title>Web3 Agency Unified Control Panel</title>
   <style>
     body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
-    .container { max-width: 850px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .container { max-width: 600px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     h2, h3 { color: #4CAF50; border-bottom: 2px solid #333; padding-bottom: 10px; }
     .wallet-row { display: flex; align-items: center; margin-bottom: 10px; }
     .wallet-row label { width: 90px; font-weight: bold; color: #b0bec5; }
     .wallet-row input { flex: 1; padding: 8px 12px; background: #2c2c2c; color: #fff; border: 1px solid #444; border-radius: 6px; }
-    button { background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 15px; transition: background 0.3s; }
+    button { background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 15px; }
     button:hover { background: #45a049; }
     .status-box { margin-top: 25px; background: #252525; padding: 15px; border-radius: 6px; border-left: 4px solid #4CAF50; }
-    code { background: #2d2d2d; padding: 2px 6px; border-radius: 4px; color: #ce9178; font-family: monospace; }
-    pre { background: #121212; padding: 15px; border-radius: 6px; overflow-x: auto; color: #9cdcfe; font-size: 13px; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>🚀 Web3 Agency Unified Control Panel</h2>
-  <p>Dhibiti mtambo wako wa kiotomatiki wa kuchuja wallets 50k na kutuma ujumbe wa Duka lako la Wallpapers na Stickers za USDT bila gas fee.</p>
+  <h2>🚀 Web3 Agency Control Panel</h2>
+  <p>Dhibiti Wallet 10 za kutuma ujumbe wa Duka lako la Wallpapers na Stickers za USDT.</p>
 
-  <h3>⚙️ Kikosi Kazi cha Wallet 10 (Project 2)</h3>
-  <div id="wallet-inputs-container">
-    <!-- Sehemu 10 za wallet zitajazwa hapa na JavaScript -->
-  </div>
+  <h3>⚙️ Kikosi Kazi cha Wallet 10</h3>
+  <div id="wallet-inputs-container"></div>
 
-  <button id="save-config-btn">Hifadhi Mipangilio ya Agency</button>
+  <button id="save-config-btn">Hifadhi Mipangilio</button>
 
   <div class="status-box">
-    <h3>📊 Hali ya Mfumo (Pipeline Status)</h3>
-    <p><strong>Lengo la Siku:</strong> Wallets 50,000</p>
-    <p><strong>Kichujio cha Marudio:</strong> Kimeamilishwa (Master Vault History)</p>
-    <p><strong>Hali ya Mfumo:</strong> Inaunganishwa na GitHub Actions (24/7)</p>
+    <h3>📊 Hali ya Mfumo</h3>
+    <p><strong>Lengo:</strong> Wallets 50,000 kwa siku</p>
     <p id="save-status" style="color: #4CAF50; font-weight: bold;"></p>
   </div>
-
-  <hr style="border: 0; border-top: 1px solid #333; margin: 30px 0;">
-
-  <h3>📦 Maelezo ya Backend & GitHub Actions</h3>
-  <p>Ili kuendesha mtambo huu kwenye wingu la GitHub, hakikisha unafaili la skripti ya nyuma na workflow kama ilivyoonyeshwa hapa chini:</p>
-  
-  <p><strong>1. Faili la Skripti ya Nyuma (<code>agency-pipeline.js</code>):</strong></p>
-  <pre>
-const fs = require('fs');
-const HISTORY_FILE = './history-wallets.json';
-
-function loadHistory() {
-  if (!fs.existsSync(HISTORY_FILE)) return new Set();
-  try {
-    const data = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8'));
-    return new Set(data.map(addr => addr.toLowerCase()));
-  } catch (e) {
-    return new Set();
-  }
-}
-
-function saveHistory(historySet) {
-  fs.writeFileSync(HISTORY_FILE, JSON.stringify(Array.from(historySet), null, 2));
-}
-
-async function runUnifiedAgencyPipeline() {
-  console.log("🚀 AGENCY PIPELINE INAANZA KAZI...");
-  const rawWallets = []; // Weka hapa orodha yako au chanzo cha data ya miamala
-  const historicalSet = loadHistory();
-
-  // Zuia marudio (Master Blacklist)
-  const uniqueNewWallets = rawWallets.filter(addr => !historicalSet.has(addr.toLowerCase()));
-  const todaysTarget = uniqueNewWallets.slice(0, 50000);
-
-  // Kichujio cha XMTP kwa Makundi (Batching)
-  const batchSize = 100;
-  const verifiedCleanLeads = [];
-  
-  for (let i = 0; i < todaysTarget.length; i += batchSize) {
-    const batch = todaysTarget.slice(i, i + batchSize);
-    const promises = batch.map(async (addr) => {
-      try { 
-        return true; /* Weka mantiki ya XMTP canMessage hapa */ 
-      } catch (e) { 
-        return null; 
-      }
-    });
-    const results = await Promise.all(promises);
-    verifiedCleanLeads.push(...results.filter(a => a !== null));
-    await new Promise(r => setTimeout(r, 200));
-  }
-
-  // Utumaji Ujumbe kupitia Wallet 10 (Load Balancing)
-  const walletsConfig = process.env.TEN_WALLETS_KEYS || "";
-  const clientWallets = walletsConfig.split(",").map(w => w.trim()).filter(w => w.length > 0);
-
-  if (clientWallets.length === 0) {
-    console.log("⚠️ Onyo: Hakuna wallet zilizowekwa kwenye TEN_WALLETS_KEYS secrets.");
-  }
-
-  for (let i = 0; i < verifiedCleanLeads.length; i++) {
-    const lead = verifiedCleanLeads[i];
-    const activeWalletIndex = clientWallets.length > 0 ? (i % clientWallets.length) : 0;
-    console.log(`[Ujumbe Umetumwa] Kwa: ${lead} | Kupitia Wallet Index #${activeWalletIndex + 1}`);
-  }
-
-  todaysTarget.forEach(addr => historicalSet.add(addr.toLowerCase()));
-  saveHistory(historicalSet);
-  console.log("💾 Kumbukumbu imesasishwa kikamilifu!");
-}
-
-runUnifiedAgencyPipeline();
-  </pre>
-
-  <p><strong>2. Faili la GitHub Workflow (<code>.github/workflows/agency.yml</code>):</strong></p>
-  <pre>
-name: Unified Web3 Agency Autonomous Pipeline
-
-on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
-
-jobs:
-  run-pipeline:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install Dependencies
-        run: npm install @xmtp/xmit-sdk
-      - name: Run Unified Agency Script
-        env:
-          TEN_WALLETS_KEYS: ${{ secrets.TEN_WALLETS_KEYS }}
-        run: node agency-pipeline.js
-  </pre>
 </div>
 
 <script>
-  // Kutengeneza sehemu 10 za wallet kwenye dashboard kiotomatiki
   const container = document.getElementById('wallet-inputs-container');
   for (let i = 1; i <= 10; i++) {
     const div = document.createElement('div');
@@ -160,20 +46,14 @@ jobs:
     container.appendChild(div);
   }
 
-  // Kupakia wallet zilizohifadhiwa awali kutoka kwenye kivinjari
   window.addEventListener('DOMContentLoaded', () => {
-    try {
-      const savedWallets = JSON.parse(localStorage.getItem('agency_ten_wallets') || '[]');
-      savedWallets.forEach((addr, index) => {
-        const input = document.getElementById(`wallet-${index + 1}`);
-        if (input) input.value = addr;
-      });
-    } catch (e) {
-      console.error("Hitilafu katika kusoma local storage:", e);
-    }
+    const savedWallets = JSON.parse(localStorage.getItem('agency_ten_wallets') || '[]');
+    savedWallets.forEach((addr, index) => {
+      const input = document.getElementById(`wallet-${index + 1}`);
+      if (input) input.value = addr;
+    });
   });
 
-  // Kitufe cha kuhifadhi mabadiliko
   document.getElementById('save-config-btn').addEventListener('click', () => {
     const wallets = [];
     for (let i = 1; i <= 10; i++) {
@@ -181,9 +61,9 @@ jobs:
       if (val) wallets.push(val);
     }
     localStorage.setItem('agency_ten_wallets', JSON.stringify(wallets));
-    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} zimehifadhiwa kikamilifu kwenye Dashboard yako.`;
+    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} zimehifadhiwa.`;
   });
 </script>
 
 </body>
-  </html>
+</html>
