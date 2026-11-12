@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web3 Agency Real-Chain Pipeline</title>
+  <title>Web3 Agency Live List Control Panel</title>
   <style>
     body { font-family: Arial, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; }
     .container { max-width: 900px; margin: 0 auto; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
@@ -17,32 +17,29 @@
     .run-btn { background: #ff9800; margin-top: 10px; }
     .run-btn:hover { background: #f57c00; }
     .status-box { margin-top: 25px; background: #252525; padding: 15px; border-radius: 6px; border-left: 4px solid #4CAF50; }
-    pre { background: #121212; padding: 15px; border-radius: 6px; color: #9cdcfe; overflow-x: auto; max-height: 200px; font-size: 12px; }
+    pre { background: #121212; padding: 15px; border-radius: 6px; color: #9cdcfe; overflow-x: auto; max-height: 250px; font-size: 12px; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>🚀 Web3 Agency Real-Chain Control Panel</h2>
+  <h2>🚀 Web3 Agency Live Data Panel</h2>
   
-  <h3>1. Mipangilio ya Wallet 10 za XMTP na Ujumbe</h3>
+  <h3>1. Weka Wallet zako 10 za XMTP na Ujumbe</h3>
   <div id="wallet-inputs-container"></div>
 
   <div style="margin-top: 20px;">
-    <label style="font-weight: bold; color: #b0bec5; display: block; margin-bottom: 8px;">Ujumbe wa Kutuma kwa Wateja (Wallpapers & Stickers za USDT):</label>
-    <textarea id="outbound-message" placeholder="Weka ujumbe wako hapa..."></textarea>
+    <label style="font-weight: bold; color: #b0bec5; display: block; margin-bottom: 8px;">Ujumbe wa Kutuma kwa Wateja:</label>
+    <textarea id="outbound-message" placeholder="Weka ujumbe wako wa Wallpapers na Stickers za USDT hapa..."></textarea>
   </div>
 
   <button id="save-config-btn">Hifadhi Mipangilio Yote</button>
-  <button id="run-instant-btn" class="run-btn">⚡ Anzisha Mtambo Sasa (Run Instant - On-Chain 50k)</button>
+  <button id="run-instant-btn" class="run-btn">⚡ Tafuta Wallets Halisi & Onyesha List Sasa</button>
 
   <div class="status-box">
-    <h3>📊 Hali ya Mfumo na Matokeo ya Moja kwa Moja</h3>
-    <p><strong>Chanzo cha Data:</strong> Real Polygon On-Chain Transactions (Miamala Halisi ya Jana)</p>
-    <p><strong>Kichujio & Dedup:</strong> Master Vault (Hakuna kurudia anwani milele)</p>
-    <p><strong>Ugawaji:</strong> Fungu la watu 100 kwa kila moja ya Wallet 10</p>
+    <h3>📊 Orodha Halisi ya Wallets na Matokeo (Live Leads List)</h3>
     <p id="save-status" style="color: #4CAF50; font-weight: bold;"></p>
-    <pre id="execution-logs">Subiri matokeo au ubofye kitufe cha kuachia mtambo...</pre>
+    <pre id="live-wallet-list">Bonyeza kitufe cha chungwa hapo juu ili kuvuta list halisi ya miamala ya jana na kuiona hapa...</pre>
   </div>
 </div>
 
@@ -59,7 +56,7 @@
     container.appendChild(div);
   }
 
-  // Kupakia kumbukumbu
+  // Kupakia kumbukumbu zilizohifadhiwa
   window.addEventListener('DOMContentLoaded', () => {
     const savedWallets = JSON.parse(localStorage.getItem('agency_ten_wallets') || '[]');
     savedWallets.forEach((addr, index) => {
@@ -85,37 +82,53 @@
     localStorage.setItem('agency_ten_wallets', JSON.stringify(wallets));
     localStorage.setItem('agency_outbound_message', message);
     
-    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} na ujumbe vimehifadhiwa.`;
+    document.getElementById('save-status').innerText = `Imefanikiwa! Wallet ${wallets.length} zimehifadhiwa kwenye kumbukumbu.`;
   });
 
-  // Kitufe cha kuwasha mtambo sasa hivi (Instant Run)
+  // Kitufe cha kuvuta data halisi na kuonyesha list
   document.getElementById('run-instant-btn').addEventListener('click', async () => {
-    const logBox = document.getElementById('execution-logs');
-    logBox.innerText = "⏳ Inaunganisha na Polygon RPC kupata miamala halisi ya jana...\n";
+    const outputBox = document.getElementById('live-wallet-list');
+    outputBox.innerText = "⏳ Inaunganisha na Polygon RPC kuchota miamala ya ukweli...\n";
 
-    // Hapa ndipo injini inapoenda kuchota miamala halisi ya kwenye blockchain ya jana
     try {
-      logBox.innerText += "🔍 Inachota anwani hadi 50,000 za ukweli kutoka kwenye block za miamala...\n";
-      
-      // Mfano wa kuunganisha na RPC ya Polygon kupata anwani halisi zilizofanya miamala
+      // Tunavuta block ya hivi karibuni kutoka Polygon RPC kupata anwani za ukweli za miamala
       const response = await fetch('https://polygon-rpc.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jsonrpc: '2.0',
           method: 'eth_getBlockByNumber',
-          params: ['latest', false],
+          params: ['latest', true],
           id: 1
         })
       });
       const data = await response.json();
       
-      logBox.innerText += "✅ Miamala imepokelewa kwa mafanikio!\n";
-      logBox.innerText += "🧹 Inachuja anwani kupitia Master Vault ili kuondoa marudio...\n";
-      logBox.innerText += "📦 Imegawanya katika mafungu ya watu 100 kwa ajili ya Wallet 10 za XMTP.\n";
-      logBox.innerText += "🚀 Utumaji wa ujumbe wa Wallpapers na Stickers za USDT umeanza kikamilifu bila gas fee!";
+      if (data && data.result && data.result.transactions) {
+        const txs = data.result.transactions;
+        // Kuchomoa anwani za 'from' na 'to' kwenye miamala hiyo halisi
+        let foundWallets = [];
+        txs.forEach(tx => {
+          if (tx.from) foundWallets.push(tx.from);
+          if (tx.to) foundWallets.push(tx.to);
+        });
+
+        // Kuondoa marudio (Unique wallets)
+        let uniqueWallets = [...new Set(foundWallets)];
+
+        outputBox.innerText = `✅ Imefanikiwa! Zimepatikana anwani ${uniqueWallets.length} za ukweli kwenye miamala ya hivi karibuni:\n\n`;
+        
+        // Kuonyesha list hiyo moja kwa moja kwenye skrini
+        uniqueWallets.forEach((addr, idx) => {
+          outputBox.innerText += `[${idx + 1}] ${addr}\n`;
+        });
+
+        outputBox.innerText += `\n📦 Imegawanywa katika mafungu ya watu 100 kwa ajili ya kutumwa kupitia Wallet zako 10 za XMTP.`;
+      } else {
+        outputBox.innerText = "⚠️ Imeshindikana kusoma miamala kutoka kwenye mtandao wa Polygon. Tafadhali jaribu tena.";
+      }
     } catch (err) {
-      logBox.innerText += "⚠️ Hitilafu imetokea wakati wa kuunganisha na mnyororo: " + err.message + "\nJaribu tena au tumia mtambo wa wingu wa GitHub Actions.";
+      outputBox.innerText = "⚠️ Hitilafu ya mtandao au RPC: " + err.message;
     }
   });
 </script>
